@@ -15,7 +15,7 @@ def main():
 
     # get options from command line
     parser = OptionParser()
-    parser.add_option('-d', '--dataset',   help='dataset',           dest='dataset')
+    parser.add_option('-d', '--dataset',   help='dataset',           dest='dataset',   type=str, default='2018_mMed-400_mDark-2_temp-2_decay-darkPho')
     parser.add_option('-N', '--nFiles',    help='nFiles',            dest='nFiles',    type=int, default=-1)
     parser.add_option('-M', '--startFile', help='startFile',         dest='startFile', type=int, default=0)
     parser.add_option(      '--condor',    help='running on condor', dest='condor',              default=False, action='store_true')
@@ -24,10 +24,9 @@ def main():
     options, args = parser.parse_args()
 
     # set output root file
-    sample = "2018_mMed-400_mDark-2_temp-2_decay-darkPho" 
-    #sample = "2018_mMed-750_mDark-2_temp-2_decay-darkPhoHad" 
-    #sample = options.dataset
-    outfile = "MyAnalysis_%s_%d.root" % (sample, options.startFile) if options.condor else "test.root"
+    sample = options.dataset
+    outfile = "output/%s_%d.root" % (sample, options.startFile) if options.condor else "output/%s.root" % sample
+    
 
     # getting dictionary of files from a sample collection e.g. "2016_QCD, 2016_WJets, 2016_TTJets, 2016_ZJets"
     fileset = s.getFileset(sample, True, options.startFile, options.nFiles)

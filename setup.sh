@@ -93,9 +93,9 @@ sed -i "2a source ${LCG}/setup.sh"'\nexport PYTHONPATH=""' $NAME/bin/activate
 sed -i "4a source ${LCG}/setup.csh"'\nsetenv PYTHONPATH ""' $NAME/bin/activate.csh
 
 #$ECHO "\nSetting up the ipython/jupyter kernel ... "
-#storage_dir=$(readlink -f $PWD)
-#ipython kernel install --prefix=${storage_dir}/.local --name=$NAME
-#tar -zcf ${NAME}.tar.gz ${NAME}
+storage_dir=$(readlink -f $PWD)
+ipython kernel install --prefix=${storage_dir}/.local --name=$NAME
+tar -zcf ${NAME}.tar.gz ${NAME}
 
 deactivate
 $ECHO "\nFINISHED"

@@ -10,7 +10,7 @@ class MainProcessor(processor.ProcessorABC):
         def __init__(self):
                 # dataset_axis = hist.Cat("dataset", "Primary dataset")
                 # pt_axis = hist.Bin("pt", r"$p_{T}$ [GeV]", 40, 0, 3500)
-                ntrack_axis                 = hist.Bin("ntracks",               "Number of Tracks",                                 20,     0.0,    500.0)
+                ntrack_axis                 = hist.Bin("ntracks",               "Number of Tracks",                                 50,     0.0,    500.0)
                 njet_axis                   = hist.Bin("njets",                 "Number of Jets",                                   20,     0.0,    20.0)
                 ht_axis                     = hist.Bin("ht",                    "H_{T} (GeV)",                                   500,    0.0,    5000.0)
                 st_axis                     = hist.Bin("st",                    "S_{T} (GeV)",                                   500,    0.0,    5000.0)
