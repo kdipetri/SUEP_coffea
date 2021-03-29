@@ -85,7 +85,7 @@ class MainProcessor(processor.ProcessorABC):
                 jets_1j = jets[cut_1j]
                 metPhi_1j = metPhi[cut_1j]
                 evtw_1j = evtw[cut_1j]
-                dPhij1 = utl.deltaPhi(jets_1j.phi[:,0],metPhi_1j)
+                #dPhij1 = utl.deltaPhi(jets_1j.phi[:,0],metPhi_1j)
                 output['cutflow']['one jet'] += jets_1j.size
 
                 ## at least 2 AK4 Jets
@@ -98,9 +98,9 @@ class MainProcessor(processor.ProcessorABC):
                 j1_phi = np.array(jets_2j.phi[:,0])
                 j2_phi = np.array(jets_2j.phi[:,1])
                 dEtaj12 = abs(j1_eta - j2_eta)
-                deltaR12j = utl.delta_R(j1_phi,j2_phi,j1_eta,j2_eta)
-                dPhij1_2j = utl.deltaPhi(j1_phi,metPhi_2j)
-                dPhij2 = utl.deltaPhi(j2_phi,metPhi_2j)
+                #deltaR12j = utl.delta_R(j1_phi,j2_phi,j1_eta,j2_eta)
+                #dPhij1_2j = utl.deltaPhi(j1_phi,metPhi_2j)
+                #dPhij2 = utl.deltaPhi(j2_phi,metPhi_2j)
                 output['cutflow']['two jets'] += jets_2j.size
 
                 ### at least 1 AK8 Jet
