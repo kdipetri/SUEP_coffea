@@ -64,7 +64,7 @@ class MainProcessor(processor.ProcessorABC):
                 ht = ak.sum(jets.pt,axis=1)
                 st = ht + met
                 #dPhiMinJ = utl.deltaPhi(fjets.phi,metPhi).min()
-                dPhiMinj = utl.deltaPhi(jets.phi,metPhi).min()
+                #dPhiMinj = utl.deltaPhi(jets.phi,metPhi).min()
 
                 #
                 # Trigger Study...

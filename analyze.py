@@ -2,6 +2,8 @@
 from coffea import hist, processor
 from processors.mainProcessor import MainProcessor
 import uproot
+import uproot4
+uproot4.open.defaults["xrootd_handler"] = uproot4.source.xrootd.MultithreadedXRootDSource
 import sys
 from utils import samples as s
 import time
@@ -22,7 +24,8 @@ def main():
     options, args = parser.parse_args()
 
     # set output root file
-    sample = "2018_mMed-750_mDark-2_temp-2_decay-darkPhoHad" 
+    sample = "2018_mMed-400_mDark-2_temp-2_decay-darkPho" 
+    #sample = "2018_mMed-750_mDark-2_temp-2_decay-darkPhoHad" 
     #sample = options.dataset
     outfile = "MyAnalysis_%s_%d.root" % (sample, options.startFile) if options.condor else "test.root"
 

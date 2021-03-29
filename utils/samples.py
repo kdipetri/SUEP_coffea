@@ -8,6 +8,7 @@ def getFileset(sample,verbose=True,startFile=0,nFiles=-1):
     year = sample[:f_]
     detailKey = sample[f_+1:]
     kind = "signals" if ("mMed" in detailKey or "mZprime" in detailKey) else "backgrounds"
+    darkPho = 1 if ("darkPho" in detailKey and "Had" not in detailKey) else 0
     if "Incl" in detailKey:
         ii = detailKey.find("Incl")
         detailKey = detailKey[:ii] + "Tune"
@@ -21,6 +22,7 @@ def getFileset(sample,verbose=True,startFile=0,nFiles=-1):
     # open all json files and dump them into a dictionary
     fileset_all = {}
     for s in inputSamples:
+        if darkPho and "Had" in s: continue
         fileset_all.update(json.load(open(s ,'r')))
 
     # process a subset of a sample

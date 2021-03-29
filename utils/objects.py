@@ -126,7 +126,7 @@ class Objects:
             bDeepCSVprob=df['Jets_bJetTagDeepCSVBvsAll'].flatten(),
         )
         
-        (self.fatjets10, self.fatjets15, self.fatjets20) = makeFatJets(self.tracks)
+        #(self.fatjets10, self.fatjets15, self.fatjets20) = makeFatJets(self.tracks)
         self.trackEtaCut = 2.5
         self.etaCut = 2.4
 
