@@ -94,7 +94,7 @@ class Objects:
             charge=df['Electrons_charge'].flatten()
         )    
         print("Getting Tracks")
-        print(df['Tracks_charge'].counts)
+        #print(df['Tracks_charge'].counts)
         self.tracks = JaggedCandidateArray.candidatesfromcounts(
             df['Tracks_charge'].counts,
             px=df['Tracks.fCoordinates.fX'].flatten(),

@@ -53,7 +53,9 @@ class MainProcessor(processor.ProcessorABC):
                 # Hack: defining weights: same length as the number of events in the chunk
                 # Check if this is what other people do too
                 luminosity = 21071.0+38654.0
-                evtw = df['Weight'][mask]*luminosity
+                evtw = np.ones(len(df['MET']),dtype=float)
+                #evtw = df['Weight'][mask]*luminosity
+                #evtw = df['Weight'][mask]*luminosity
                 ew = utl.awkwardReshape(electrons,evtw)
                 mw = utl.awkwardReshape(muons,evtw)
                 jw = utl.awkwardReshape(jets,evtw)
