@@ -12,6 +12,8 @@ class MainProcessor(processor.ProcessorABC):
                 # pt_axis = hist.Bin("pt", r"$p_{T}$ [GeV]", 40, 0, 3500)
                 ntrack_axis                 = hist.Bin("ntracks",               "Number of Tracks",                                 50,     0.0,    500.0)
                 njet_axis                   = hist.Bin("njets",                 "Number of Jets",                                   20,     0.0,    20.0)
+                eta_axis                    = hist.Bin("eta",                   r"$\eta$",                                   100,   -3.5, 3.5)
+                pt_axis                     = hist.Bin("pt",                    "p_{T} (GeV)",                                   500,    0.0,    500.0)
                 ht_axis                     = hist.Bin("ht",                    "H_{T} (GeV)",                                   500,    0.0,    5000.0)
                 st_axis                     = hist.Bin("st",                    "S_{T} (GeV)",                                   500,    0.0,    5000.0)
                 met_axis                    = hist.Bin("MET",                   "E_{T}^{miss} (GeV)",                                   200,    0.0,    2000.0)
@@ -20,13 +22,34 @@ class MainProcessor(processor.ProcessorABC):
                 self._accumulator = processor.dict_accumulator({
                         # 'jtpt':hist.Hist("Counts", dataset_axis, pt_axis),
                         # 'jteta':hist.Hist("Counts",dataset_axis,eta_axis),
-                        'h_ntracks':                hist.Hist("h_ntracks",              ntrack_axis),
-                        'h_njets':                  hist.Hist("h_njets",                njet_axis),
-                        'h_ht':                     hist.Hist("h_ht",                   ht_axis),
-                        'h_st':                     hist.Hist("h_st",                   st_axis),
-                        'h_met':                    hist.Hist("h_met",                  met_axis),
-                        'cutflow':                  processor.defaultdict_accumulator(int),
-                        'trigger':                  processor.defaultdict_accumulator(int),
+                        'h_ht':            hist.Hist("h_ht",                   ht_axis),
+                        'h_st':            hist.Hist("h_st",                   st_axis),
+                        'h_met':           hist.Hist("h_met",                  met_axis),
+                        'h_ntracks':       hist.Hist("h_ntracks",              ntrack_axis),
+                        'h_track_pt':      hist.Hist("h_track_pt",             pt_axis),
+                        'h_track_eta':     hist.Hist("h_track_eta",            eta_axis),
+                        'h_jet_pt':        hist.Hist("h_jet_pt",               pt_axis),
+                        'h_jet_eta':       hist.Hist("h_jet_eta",              eta_axis),
+                        'h_njets':         hist.Hist("h_njets",                njet_axis),
+
+                        'h_scout_ht':        hist.Hist("h_scout_ht",         ht_axis),
+                        'h_scout_ntracks':   hist.Hist("h_scout_ntracks",    ntrack_axis),
+                        'h_scout_track_pt':  hist.Hist("h_scout_track_pt",   pt_axis),
+                        'h_scout_track_eta': hist.Hist("h_scout_track_eta",  eta_axis),
+                        'h_scout_jet_pt':    hist.Hist("h_scout_jet_pt",     pt_axis),
+                        'h_scout_jet_eta':   hist.Hist("h_scout_jet_eta",    eta_axis),
+                        'h_scout_njets':     hist.Hist("h_scout_njets",      njet_axis),
+
+                        'h_off_ht':        hist.Hist("h_off_ht",         ht_axis),
+                        'h_off_ntracks':   hist.Hist("h_off_ntracks",    ntrack_axis),
+                        'h_off_track_pt':  hist.Hist("h_off_track_pt",   pt_axis),
+                        'h_off_track_eta': hist.Hist("h_off_track_eta",  eta_axis),
+                        'h_off_jet_pt':    hist.Hist("h_off_jet_pt",     pt_axis),
+                        'h_off_jet_eta':   hist.Hist("h_off_jet_eta",    eta_axis),
+                        'h_off_njets':     hist.Hist("h_off_njets",      njet_axis),
+
+                        'cutflow':         processor.defaultdict_accumulator(int),
+                        'trigger':         processor.defaultdict_accumulator(int),
                 })
 
         @property
@@ -75,12 +98,27 @@ class MainProcessor(processor.ProcessorABC):
                 cut_ht_offline = ht > 1200 
                 cut_ht_scouting = ht > 500
                 jets_met      = jets[cut_met]
-                jets_ht_off   = jets[cut_ht_offline]
-                jets_ht_scout = jets[cut_ht_scouting]
+                jets_off   = jets[cut_ht_offline]
                 output['trigger']['all events']  += jets.size
                 output['trigger']['met']         += jets_met.size
-                output['trigger']['ht_offline']  += jets_ht_off.size
-                output['trigger']['ht_scouting'] += jets_ht_scout.size
+                output['trigger']['ht_offline']  += jets_off.size
+
+
+                ## ht scouting 
+                tracks_scout = tracks[cut_ht_scouting]
+                jets_scout = jets[cut_ht_scouting]
+                evtw_scout = evtw[cut_ht_scouting]
+                tw_scout = tw[cut_ht_scouting] 
+                jw_scout = jw[cut_ht_scouting] 
+                output['trigger']['ht_scouting'] += jets_scout.size
+
+                ## ht offline 
+                tracks_off = tracks[cut_ht_offline]
+                jets_off = jets[cut_ht_offline]
+                evtw_off = evtw[cut_ht_offline]
+                tw_off = tw[cut_ht_offline] 
+                jw_off = jw[cut_ht_offline] 
+                output['trigger']['ht_offline']  += jets_off.size
 
                 ## at least 1 AK4 Jet
                 cut_1j = jets.counts >= 1
@@ -143,6 +181,19 @@ class MainProcessor(processor.ProcessorABC):
                 output['h_ht'].fill(ht=ht,weight=evtw)
                 output['h_st'].fill(st=st,weight=evtw)
                 output['h_met'].fill(MET=met,weight=evtw)
+
+
+                output['h_scout_ntracks'].fill(ntracks=tracks_scout.counts.flatten(),weight=evtw_scout)
+                output['h_scout_track_pt'].fill(pt=tracks_scout.pt.flatten(),weight=ak.flatten(tw_scout))
+                output['h_scout_track_eta'].fill(eta=tracks_scout.eta.flatten(),weight=ak.flatten(tw_scout))
+                output['h_scout_jet_pt'].fill(pt=jets_scout.pt.flatten(),weight=ak.flatten(jw_scout))
+                output['h_scout_jet_eta'].fill(eta=jets_scout.eta.flatten(),weight=ak.flatten(jw_scout))
+
+                output['h_off_ntracks'].fill(ntracks=tracks_off.counts.flatten(),weight=evtw_off)
+                output['h_off_track_pt'].fill(pt=tracks_off.pt.flatten(),weight=ak.flatten(tw_off))
+                output['h_off_track_eta'].fill(eta=tracks_off.eta.flatten(),weight=ak.flatten(tw_off))
+                output['h_off_jet_pt'].fill(pt=jets_off.pt.flatten(),weight=ak.flatten(jw_off))
+                output['h_off_jet_eta'].fill(eta=jets_off.eta.flatten(),weight=ak.flatten(jw_off))
                 #output['h_jPt'].fill(pt=jets.pt.flatten(),weight=ak.flatten(jw))
                 #output['h_jEta'].fill(eta=jets.eta.flatten(),weight=ak.flatten(jw))
                 #output['h_jPhi'].fill(phi=jets.phi.flatten(),weight=ak.flatten(jw))

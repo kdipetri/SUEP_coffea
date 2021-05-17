@@ -8,13 +8,17 @@
 #python analyze.py --dataset 2018_mMed-400_mDark-5_temp-2_decay-darkPho 
 #python analyze.py --dataset 2018_mMed-400_mDark-5_temp-5_decay-darkPho 
 
-python analyze.py --dataset 2018_mMed-125_mDark-2_temp-2_decay-darkPhoHad
-python analyze.py --dataset 2018_mMed-400_mDark-2_temp-2_decay-darkPhoHad 
-python analyze.py --dataset 2018_mMed-750_mDark-2_temp-2_decay-darkPhoHad
-python analyze.py --dataset 2018_mMed-1000_mDark-2_temp-2_decay-darkPhoHad
 #python analyze.py --dataset 2018_mMed-400_mDark-2_temp-2_decay-generic
+#python analyze.py --dataset 2018_mMed-400_mDark-2_temp-2_decay-darkPhoHad 
+#python analyze.py --dataset 2018_mMed-125_mDark-2_temp-2_decay-darkPho
+#python analyze.py --dataset 2018_mMed-750_mDark-2_temp-2_decay-darkPho
+#python analyze.py --dataset 2018_mMed-1000_mDark-2_temp-2_decay-darkPho
 
-## QCD
+python analyze.py --dataset 2018_mMed-200_mDark-2_temp-2_decay-darkPho 
+python analyze.py --dataset 2018_mMed-300_mDark-2_temp-2_decay-darkPho 
+
+
+### QCD
 #python analyze.py --dataset 2018_QCD_HT300to500
 #python analyze.py --dataset 2018_QCD_HT500to700
 #python analyze.py --dataset 2018_QCD_HT700to1000
