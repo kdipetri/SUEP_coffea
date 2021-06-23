@@ -14,6 +14,8 @@ class MainProcessor(processor.ProcessorABC):
                 njet_axis                   = hist.Bin("njets",                 "Number of Jets",                                   20,     0.0,    20.0)
                 eta_axis                    = hist.Bin("eta",                   r"$\eta$",                                   100,   -3.5, 3.5)
                 pt_axis                     = hist.Bin("pt",                    "p_{T} (GeV)",                                   500,    0.0,    500.0)
+                trkpt_axis                  = hist.Bin("trkpt",                 "p_{T} (GeV)",                                   200,    0.0,     20.0)
+                trkptL_axis                 = hist.Bin("trkptL",                "p_{T} (GeV)",                                   1000,    0.0,     100.0)
                 ht_axis                     = hist.Bin("ht",                    "H_{T} (GeV)",                                   500,    0.0,    5000.0)
                 st_axis                     = hist.Bin("st",                    "S_{T} (GeV)",                                   500,    0.0,    5000.0)
                 met_axis                    = hist.Bin("MET",                   "E_{T}^{miss} (GeV)",                                   200,    0.0,    2000.0)
@@ -26,23 +28,35 @@ class MainProcessor(processor.ProcessorABC):
                         'h_st':            hist.Hist("h_st",                   st_axis),
                         'h_met':           hist.Hist("h_met",                  met_axis),
                         'h_ntracks':       hist.Hist("h_ntracks",              ntrack_axis),
-                        'h_track_pt':      hist.Hist("h_track_pt",             pt_axis),
+                        'h_track_pt':      hist.Hist("h_track_pt",             trkpt_axis),
                         'h_track_eta':     hist.Hist("h_track_eta",            eta_axis),
                         'h_jet_pt':        hist.Hist("h_jet_pt",               pt_axis),
                         'h_jet_eta':       hist.Hist("h_jet_eta",              eta_axis),
                         'h_njets':         hist.Hist("h_njets",                njet_axis),
 
                         'h_scout_ht':        hist.Hist("h_scout_ht",         ht_axis),
+                        'h_scout_ntracks05': hist.Hist("h_scout_ntracks05",  ntrack_axis),
+                        'h_scout_ntracks06': hist.Hist("h_scout_ntracks06",  ntrack_axis),
+                        'h_scout_ntracks07': hist.Hist("h_scout_ntracks07",  ntrack_axis),
+                        'h_scout_ntracks08': hist.Hist("h_scout_ntracks08",  ntrack_axis),
+                        'h_scout_ntracks09': hist.Hist("h_scout_ntracks09",  ntrack_axis),
                         'h_scout_ntracks':   hist.Hist("h_scout_ntracks",    ntrack_axis),
-                        'h_scout_track_pt':  hist.Hist("h_scout_track_pt",   pt_axis),
+                        'h_scout_track_pt':  hist.Hist("h_scout_track_pt",   trkpt_axis),
+                        'h_scout_track_ptL': hist.Hist("h_scout_track_ptL",  trkptL_axis),
                         'h_scout_track_eta': hist.Hist("h_scout_track_eta",  eta_axis),
                         'h_scout_jet_pt':    hist.Hist("h_scout_jet_pt",     pt_axis),
                         'h_scout_jet_eta':   hist.Hist("h_scout_jet_eta",    eta_axis),
                         'h_scout_njets':     hist.Hist("h_scout_njets",      njet_axis),
 
+                        'h_scout_ntracks_lowNPV':   hist.Hist("h_scout_ntracks_lowNPV",    ntrack_axis),
+                        'h_scout_ntracks_midNPV':   hist.Hist("h_scout_ntracks_midNPV",    ntrack_axis),
+                        'h_scout_ntracks_higNPV':   hist.Hist("h_scout_ntracks_higNPV",    ntrack_axis),
+
                         'h_off_ht':        hist.Hist("h_off_ht",         ht_axis),
+                        'h_off_ntracks06': hist.Hist("h_off_ntracks06",  ntrack_axis),
+                        'h_off_ntracks08': hist.Hist("h_off_ntracks08",  ntrack_axis),
                         'h_off_ntracks':   hist.Hist("h_off_ntracks",    ntrack_axis),
-                        'h_off_track_pt':  hist.Hist("h_off_track_pt",   pt_axis),
+                        'h_off_track_pt':  hist.Hist("h_off_track_pt",   trkpt_axis),
                         'h_off_track_eta': hist.Hist("h_off_track_eta",  eta_axis),
                         'h_off_jet_pt':    hist.Hist("h_off_jet_pt",     pt_axis),
                         'h_off_jet_eta':   hist.Hist("h_off_jet_eta",    eta_axis),
@@ -50,6 +64,8 @@ class MainProcessor(processor.ProcessorABC):
 
                         'cutflow':         processor.defaultdict_accumulator(int),
                         'trigger':         processor.defaultdict_accumulator(int),
+        
+                     #)
                 })
 
         @property
@@ -69,6 +85,12 @@ class MainProcessor(processor.ProcessorABC):
                 madHT_cut = df['madHT'][mask]
                 met = df['MET'][mask]
                 metPhi = df['METPhi'][mask]
+                nVtx = df['NVtx'][mask]
+                tracks05 = obj.goodTracks05()[mask]
+                tracks06 = obj.goodTracks06()[mask]
+                tracks07 = obj.goodTracks07()[mask]
+                tracks08 = obj.goodTracks08()[mask]
+                tracks09 = obj.goodTracks09()[mask]
                 tracks = obj.goodTracks()[mask]
                 output['cutflow']['all events'] += jets.size
     
@@ -83,6 +105,8 @@ class MainProcessor(processor.ProcessorABC):
                 mw = utl.awkwardReshape(muons,evtw)
                 jw = utl.awkwardReshape(jets,evtw)
                 tw = utl.awkwardReshape(tracks,evtw)
+                tw06 = utl.awkwardReshape(tracks06,evtw)
+                tw05 = utl.awkwardReshape(tracks05,evtw)
 
                 # Getting subset of variables based on number of AK8 jets
                 # calculating event variables
@@ -105,18 +129,39 @@ class MainProcessor(processor.ProcessorABC):
 
 
                 ## ht scouting 
+                tracks05_scout = tracks05[cut_ht_scouting]
+                tracks06_scout = tracks06[cut_ht_scouting]
+                tracks07_scout = tracks07[cut_ht_scouting]
+                tracks08_scout = tracks08[cut_ht_scouting]
+                tracks09_scout = tracks09[cut_ht_scouting]
                 tracks_scout = tracks[cut_ht_scouting]
                 jets_scout = jets[cut_ht_scouting]
+                nVtx_scout = nVtx[cut_ht_scouting]
                 evtw_scout = evtw[cut_ht_scouting]
                 tw_scout = tw[cut_ht_scouting] 
+                tw05_scout = tw05[cut_ht_scouting] 
                 jw_scout = jw[cut_ht_scouting] 
                 output['trigger']['ht_scouting'] += jets_scout.size
 
+                ## npv study scouting 
+                cut_lowNPV = nVtx_scout < 20
+                cut_midNPV = (nVtx_scout > 20) & (nVtx_scout < 30)
+                cut_higNPV = nVtx_scout > 30
+                evtw_scout_lowNPV = evtw_scout[cut_lowNPV]
+                evtw_scout_midNPV = evtw_scout[cut_midNPV]
+                evtw_scout_higNPV = evtw_scout[cut_higNPV]
+                tracks_scout_lowNPV = tracks_scout[cut_lowNPV]
+                tracks_scout_midNPV = tracks_scout[cut_midNPV]
+                tracks_scout_higNPV = tracks_scout[cut_higNPV]
+
                 ## ht offline 
+                tracks06_off = tracks06[cut_ht_offline]
+                tracks08_off = tracks08[cut_ht_offline]
                 tracks_off = tracks[cut_ht_offline]
                 jets_off = jets[cut_ht_offline]
                 evtw_off = evtw[cut_ht_offline]
                 tw_off = tw[cut_ht_offline] 
+                tw06_off = tw06[cut_ht_offline] 
                 jw_off = jw[cut_ht_offline] 
                 output['trigger']['ht_offline']  += jets_off.size
 
@@ -182,15 +227,29 @@ class MainProcessor(processor.ProcessorABC):
                 output['h_st'].fill(st=st,weight=evtw)
                 output['h_met'].fill(MET=met,weight=evtw)
 
+                #output['h_scout_ntracks_v_npv'].fill(npv=nVtx_scout.flatten(),ntracks=tracks_scout.counts.flatten(),weight=evtw_scout)
 
+                output['h_scout_ntracks05'].fill(ntracks=tracks05_scout.counts.flatten(),weight=evtw_scout)
+                output['h_scout_ntracks06'].fill(ntracks=tracks06_scout.counts.flatten(),weight=evtw_scout)
+                output['h_scout_ntracks07'].fill(ntracks=tracks07_scout.counts.flatten(),weight=evtw_scout)
+                output['h_scout_ntracks08'].fill(ntracks=tracks08_scout.counts.flatten(),weight=evtw_scout)
+                output['h_scout_ntracks09'].fill(ntracks=tracks09_scout.counts.flatten(),weight=evtw_scout)
                 output['h_scout_ntracks'].fill(ntracks=tracks_scout.counts.flatten(),weight=evtw_scout)
-                output['h_scout_track_pt'].fill(pt=tracks_scout.pt.flatten(),weight=ak.flatten(tw_scout))
+                output['h_scout_track_pt'].fill(trkpt=tracks05_scout.pt.flatten(),weight=ak.flatten(tw05_scout))
+                output['h_scout_track_ptL'].fill(trkptL=tracks05_scout.pt.flatten(),weight=ak.flatten(tw05_scout))
                 output['h_scout_track_eta'].fill(eta=tracks_scout.eta.flatten(),weight=ak.flatten(tw_scout))
                 output['h_scout_jet_pt'].fill(pt=jets_scout.pt.flatten(),weight=ak.flatten(jw_scout))
                 output['h_scout_jet_eta'].fill(eta=jets_scout.eta.flatten(),weight=ak.flatten(jw_scout))
+            # pileup study
+                output['h_scout_ntracks_lowNPV'].fill(ntracks=tracks_scout_lowNPV.counts.flatten(),weight=evtw_scout_lowNPV)
+                output['h_scout_ntracks_midNPV'].fill(ntracks=tracks_scout_midNPV.counts.flatten(),weight=evtw_scout_midNPV)
+                output['h_scout_ntracks_higNPV'].fill(ntracks=tracks_scout_higNPV.counts.flatten(),weight=evtw_scout_higNPV)
 
+# offline
+                output['h_off_ntracks06'].fill(ntracks=tracks06_off.counts.flatten(),weight=evtw_off)
+                output['h_off_ntracks08'].fill(ntracks=tracks08_off.counts.flatten(),weight=evtw_off)
                 output['h_off_ntracks'].fill(ntracks=tracks_off.counts.flatten(),weight=evtw_off)
-                output['h_off_track_pt'].fill(pt=tracks_off.pt.flatten(),weight=ak.flatten(tw_off))
+                output['h_off_track_pt'].fill(trkpt=tracks06_off.pt.flatten(),weight=ak.flatten(tw06_off))
                 output['h_off_track_eta'].fill(eta=tracks_off.eta.flatten(),weight=ak.flatten(tw_off))
                 output['h_off_jet_pt'].fill(pt=jets_off.pt.flatten(),weight=ak.flatten(jw_off))
                 output['h_off_jet_eta'].fill(eta=jets_off.eta.flatten(),weight=ak.flatten(jw_off))

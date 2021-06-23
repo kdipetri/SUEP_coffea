@@ -135,9 +135,35 @@ class Objects:
         electronQualityCut = (self.electrons.pt > 37) & (abs(self.electrons.eta) < self.etaCut)
         return self.electrons[electronQualityCut]
 
+
+    def goodTracks05(self):
+        # # Good Tracks 
+        trackQualityCut = (self.tracks.pt > 0.6) & (abs(self.tracks.eta) < self.trackEtaCut) & (self.tracks.fromPV0 >= 2 ) & ( self.tracks.matchedToPFCandidate > 0 )
+        return self.tracks[trackQualityCut]
+
+    def goodTracks06(self):
+        # # Good Tracks 
+        trackQualityCut = (self.tracks.pt > 0.6) & (abs(self.tracks.eta) < self.trackEtaCut) & (self.tracks.fromPV0 >= 2 ) & ( self.tracks.matchedToPFCandidate > 0 )
+        return self.tracks[trackQualityCut]
+
+    def goodTracks07(self):
+        # # Good Tracks 
+        trackQualityCut = (self.tracks.pt > 0.7) & (abs(self.tracks.eta) < self.trackEtaCut) & (self.tracks.fromPV0 >= 2 ) & ( self.tracks.matchedToPFCandidate > 0 )
+        return self.tracks[trackQualityCut]
+
+    def goodTracks08(self):
+        # # Good Tracks 
+        trackQualityCut = (self.tracks.pt > 0.8) & (abs(self.tracks.eta) < self.trackEtaCut) & (self.tracks.fromPV0 >= 2 ) & ( self.tracks.matchedToPFCandidate > 0 )
+        return self.tracks[trackQualityCut]
+
+    def goodTracks09(self):
+        # # Good Tracks 
+        trackQualityCut = (self.tracks.pt > 0.9) & (abs(self.tracks.eta) < self.trackEtaCut) & (self.tracks.fromPV0 >= 2 ) & ( self.tracks.matchedToPFCandidate > 0 )
+        return self.tracks[trackQualityCut]
+
     def goodTracks(self):
         # # Good Tracks 
-        trackQualityCut = (self.tracks.pt > 1) & (abs(self.tracks.eta) < self.trackEtaCut) & (self.tracks.fromPV0 >= 2 ) & ( self.tracks.matchedToPFCandidate > 0 )
+        trackQualityCut = (self.tracks.pt > 1.) & (abs(self.tracks.eta) < self.trackEtaCut) & (self.tracks.fromPV0 >= 2 ) & ( self.tracks.matchedToPFCandidate > 0 )
         return self.tracks[trackQualityCut]
 
     def goodMuons(self):

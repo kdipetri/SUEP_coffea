@@ -12,10 +12,8 @@ def compare1D(hists,labels,filename):
 
     dy = 0.04*len(hists)
     #dy = 0.05*len(hists)
-    leg = ROOT.TLegend(0.48,0.86-dy,0.86,0.86)
-    #leg = ROOT.TLegend(0.18,0.86-dy,0.86,0.86)
+    leg = ROOT.TLegend(0.65,0.86-dy,0.86,0.86)
     leg.SetTextSize(0.03)
-    #leg.SetTextSize(0.035)
     leg.SetBorderSize(0)
     ymax = 0
     for i,hist in enumerate(hists):
@@ -30,9 +28,10 @@ def compare1D(hists,labels,filename):
 
     leg.Draw()
     c.SetLogy(1)
-    hists[0].GetYaxis().SetRangeUser(0.1,ymax*100)
+    if "scout_track_pt" in filename: hists[0].GetYaxis().SetRangeUser(10000,ymax*1.8)
+    else : hists[0].GetYaxis().SetRangeUser(0.1,ymax*100)
     c.Print("plots/{}_log.png".format(filename))
-    hists[0].GetYaxis().SetRangeUser(0,ymax*1.8)
+    hists[0].GetYaxis().SetRangeUser(0,ymax*1.8) 
     c.SetLogy(0)
     c.Print("plots/{}_lin.png".format(filename))
 
@@ -102,13 +101,18 @@ def compareAll(dist):
 
     hists=[]
     labels=[]
-    hists.append(getQCD(dist))
-    labels.append("QCD")
+    if "scout_track_pt" not in dist:
+        hists.append(getQCD(dist))
+        labels.append("QCD")
     for temp in temps:
         for mDark in mDarks:
             #for decay in decays:
                 hist = get1D(mMed,mDark,temp,decay,dist)
                 if hist: 
+                    if "scout_track_pt" in dist: 
+                        hist.Rebin()
+                        hist.GetXaxis().SetRangeUser(0,10)
+                        hist.GetXaxis().SetTitle("track p_{T} [GeV]")
                     hists.append(hist)
                     labels.append("m_{#phi}=%i, T=%i GeV"%(mDark,temp))
                     #labels.append(label(mMed,mDark,temp,decay))
@@ -122,6 +126,8 @@ compareAll("h_ht")
 compareAll("h_njets")
 
 compareAll("h_scout_ntracks")
+compareAll("h_scout_ntracks08")
+compareAll("h_scout_ntracks06")
 compareAll("h_scout_track_eta")
 compareAll("h_scout_track_pt")
 #compareAll("h_scout_njets")
@@ -129,6 +135,8 @@ compareAll("h_scout_jet_eta")
 compareAll("h_scout_jet_pt")
 
 compareAll("h_off_ntracks")
+compareAll("h_off_ntracks06")
+compareAll("h_off_ntracks08")
 compareAll("h_off_track_eta")
 compareAll("h_off_track_pt")
 #compareAll("h_off_njets")
@@ -137,12 +145,20 @@ compareAll("h_off_jet_pt")
 
 compareMmed("h_ntracks")
 compareMmed("h_scout_ntracks")
+compareMmed("h_scout_ntracks06")
+compareMmed("h_scout_ntracks08")
 compareMmed("h_off_ntracks")
+compareMmed("h_off_ntracks06")
+compareMmed("h_off_ntracks08")
 compareMmed("h_ht")
 compareMmed("h_njets")
 
 compareDecay("h_ntracks")
 compareDecay("h_scout_ntracks")
+compareDecay("h_scout_ntracks06")
+compareDecay("h_scout_ntracks08")
 compareDecay("h_off_ntracks")
+compareDecay("h_off_ntracks06")
+compareDecay("h_off_ntracks08")
 compareDecay("h_ht")
 compareDecay("h_njets")

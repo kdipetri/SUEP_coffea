@@ -77,6 +77,7 @@ def adjust(hist):
     name=hist.GetName()
     if "h_ht" in name: hist.Rebin(10) 
     if "track_pt" in name: hist.GetXaxis().SetRangeUser(0,10) 
+    if "ntracks" in name: hist.GetXaxis().SetTitle("n_{Tracks}")
     return
 
 def ytitle(hist):
@@ -145,8 +146,10 @@ def get1D(mMed,mDark,temp,decay,histname):
     f = ROOT.TFile.Open(filename)
     if not f : return 0
     hist = f.Get(histname)
+    hist_nevents = f.Get("h_ht")
+    nevents = hist_nevents.Integral(0,-1)
     if hist :
-        hist.Scale( sig_xs(mMed) / 10000. * lumi)
+        hist.Scale( sig_xs(mMed) / nevents * lumi)
         hist.SetLineColor( colors[col(mMed,mDark,temp,decay)] )
         hist.SetLineStyle( line(mMed,mDark,temp,decay) )
         clean1D(hist)
